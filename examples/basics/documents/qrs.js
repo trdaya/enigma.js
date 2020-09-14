@@ -1,7 +1,6 @@
 const enigma = require('enigma.js');
 const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
-const https = require('https');
 const path = require('path');
 const fs = require('fs');
 
@@ -38,20 +37,15 @@ const requestOptions = {
 // eslint-disable-next-line no-restricted-globals
 const getAppsFromQRS = () => new Promise((resolve, reject) => {
   const xrfKey = 'abcdefghijklmnop';
-  const xhrOptions = {
+  fetch(`${senseHost}/${proxyPrefix}/qrs/app?xrfkey=${xrfKey}`, {
     ...requestOptions,
-    host: senseHost,
-    path: `/${proxyPrefix}/qrs/app?xrfkey=${xrfKey}`,
-    withCredentials: true
-  };
-  xhrOptions.headers['X-Qlik-Xrfkey'] = xrfKey;
-  const req = https.request(xhrOptions, (res) => {
-    let data = '';
-    res.on('data', (d) => { data += d; });
-    res.on('end', () => resolve(JSON.parse(data)));
-  });
-  req.on('error', reject);
-  req.end();
+    headers: {
+      ...requestOptions.headers,
+      'X-Qlik-Xrfkey': xrfKey,
+    },
+    credentials: 'include',
+  }).then((response) => response.json())
+    .then((d) => d).catch(reject);
 });
 
 const openFirstApp = (apps) => {
