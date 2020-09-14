@@ -42,6 +42,7 @@ const getAppsFromQRS = () => new Promise((resolve, reject) => {
     ...requestOptions,
     host: senseHost,
     path: `/${proxyPrefix}/qrs/app?xrfkey=${xrfKey}`,
+    withCredentials: true
   };
   xhrOptions.headers['X-Qlik-Xrfkey'] = xrfKey;
   const req = https.request(xhrOptions, (res) => {
