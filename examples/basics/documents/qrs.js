@@ -37,6 +37,7 @@ const requestOptions = {
 // eslint-disable-next-line no-restricted-globals
 const getAppsFromQRS = () => new Promise((resolve, reject) => {
   const xrfKey = 'abcdefghijklmnop';
+  console.log('version:: 0.0.4');
   fetch(`${senseHost}/${proxyPrefix}/qrs/app?xrfkey=${xrfKey}`, {
     ...requestOptions,
     headers: {
@@ -44,8 +45,14 @@ const getAppsFromQRS = () => new Promise((resolve, reject) => {
       'X-Qlik-Xrfkey': xrfKey,
     },
     credentials: 'include',
-  }).then((response) => response.json())
-    .then((d) => d).catch(reject);
+  }).then((response) => {
+    console.log('response:: ', response);
+    return response.json()
+  })
+    .then((d) => {
+      console.log('data:: ', d);
+      return d;
+    }).catch(reject);
 });
 
 const openFirstApp = (apps) => {
